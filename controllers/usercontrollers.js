@@ -70,7 +70,7 @@ exports.validatePhoneToken = (req, res) => {
       error: "Missing token or authy_id"
     });
   }
-  authy.verify(authy_id, token, function(err, res) {
+  authy.verify(authy_id, token, function(err, resA) {
     if (err) {
       return res.status(400).json({
         status: "failed",
@@ -78,6 +78,9 @@ exports.validatePhoneToken = (req, res) => {
       });
     }
     req.session = __id;
+    res.status(200).json({
+      status: "success"
+    })
   });
 };
 
