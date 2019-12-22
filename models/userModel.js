@@ -28,5 +28,7 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+userSchema.static('findByPhone',(phone)=> this.find({phone}));
+
 var User = mongoose.model("Users", userSchema);
 module.exports = User;

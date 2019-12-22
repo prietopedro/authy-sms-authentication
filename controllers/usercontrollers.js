@@ -46,6 +46,7 @@ exports.createUser = async (req, res) => {
       authy.request_sms(req.body.authy_id, function(err, res) {
         if (err) {
           console.log(err);
+          return;
         }
       });
       return res.status(201).json({
@@ -62,7 +63,7 @@ exports.createUser = async (req, res) => {
 };
 
 exports.validatePhoneToken = (req, res) => {
-  const { token, authy_id } = req.body;
+  const { token, authy_id, __id } = req.body;
   if (!token || !authy_id) {
     return res.status(401).json({
       status: "failed",
@@ -76,6 +77,27 @@ exports.validatePhoneToken = (req, res) => {
         error: err
       });
     }
-    return res.status;
+    req.session = __id;
   });
 };
+
+exports.login = async (req,res) => {
+  if(!req.phone || req.phone.length !== 9){
+    return res.status(401).json({
+      status: "failed",
+      error: "Incorrect phone number"
+    });
+  }
+  const user = await User.findByPhone(req)
+  authy.request_sms(req.body.authy_id, function(err, res) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    return res.status(200).json({
+      status: "success",
+      user,
+    });
+  });
+
+}
